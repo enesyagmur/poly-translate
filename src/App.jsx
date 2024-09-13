@@ -5,7 +5,7 @@ import Translate from "./Components/Translate";
 
 function App() {
   return (
-    <div className="w-full h-screen bg-customGray flex flex-col">
+    <div className="w-full h-screen bg-customGray flex flex-col overflow-hidden">
       <Header />
       <div className="w-full h-[96%] flex">
         <Translate />

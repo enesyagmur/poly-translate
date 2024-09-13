@@ -1,21 +1,32 @@
-import { useState } from "react";
-import { GrSend } from "react-icons/gr";
+import { useEffect, useRef, useState } from "react";
+import { IoClose } from "react-icons/io5";
+import { IoCopyOutline } from "react-icons/io5";
+
 import converterFunc from "../Api/converter";
 
 const Inputs = () => {
-  const [inputText, setInputText] = useState("");
-  const [sourceLang, setSourceLang] = useState();
-  const [targetLang, setTargetLang] = useState();
-  const [result, setResult] = useState("");
+  const [inputTextareaValue, setInputTextareaValue] = useState("");
+  const [sourceLang, setSourceLang] = useState("");
+  const [targetLang, setTargetLang] = useState("");
+  const [result, setResult] = useState("asdasdasdasdasd");
 
-  const getTranslatedText = async () => {
+  const getTranslatedText = async (inputText) => {
+    setInputTextareaValue(inputText);
     try {
-      const response = await converterFunc(inputText, sourceLang, targetLang);
-      console.log(response);
-      setResult(response);
-      setInputText("");
+      if (inputText !== "" && sourceLang !== "" && targetLang !== "") {
+        const response = await converterFunc(inputText, sourceLang, targetLang);
+        setResult(response);
+      } else {
+        console.log("Kaynak dili ve Hedef dili seçmek zorunlu");
+      }
     } catch (error) {
       console.error("Error in inputs:", error);
+    }
+  };
+
+  const copyFunc = async () => {
+    if (result) {
+      await navigator.clipboard.writeText(result);
     }
   };
 
@@ -44,50 +55,102 @@ const Inputs = () => {
         >
           İngilizce
         </p>
-        <p className="cursor-pointer" onClick={() => setSourceLang("zh-CH")}>
+        <p
+          className={`cursor-pointer ${
+            sourceLang === `zh-CH` ? `text-customYellow` : `text-white`
+          }`}
+          onClick={() => setSourceLang("zh-CH")}
+        >
           Çince
         </p>
-        <p className="cursor-pointer" onClick={() => setSourceLang("ar")}>
+        <p
+          className={`cursor-pointer ${
+            sourceLang === `ar` ? `text-customYellow` : `text-white`
+          }`}
+          onClick={() => setSourceLang("ar")}
+        >
           Arapça
         </p>
       </div>
-      <div className="w-7/12 h-20 flex items-center bg-white rounded-full mt-4 mb-4 relative">
-        <input
-          type="text"
-          className="w-full h-full rounded-full pl-4 text-black"
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
+      <div className="w-7/12  flex items-center rounded-full mt-4 mb-4 relative">
+        <textarea
+          className="w-full p-4 pr-10 rounded-md resize-y focus:outline-none focus:ring-2 text-2xl focus:customBlue text-black "
+          rows={7}
+          onChange={(e) => getTranslatedText(e.target.value)}
+          value={inputTextareaValue}
         />
-        <div
-          className="w-[80px] h-[80px] absolute bg-customBlue right-[-1px] rounded-full flex items-center justify-center "
-          onClick={getTranslatedText}
-        >
-          <GrSend className="text-2xl" />
-        </div>
+        {inputTextareaValue ? (
+          <IoClose
+            className="absolute text-gray-500 top-4 right-3 text-3xl cursor-pointer"
+            onClick={() => setInputTextareaValue("")}
+          />
+        ) : null}
       </div>
-      <div className="w-6/12 flex items-center justify-evenly font-semibold ml-32">
-        <p className="text-customYellow">To:</p>
-        <p className="cursor-pointer" onClick={() => setTargetLang("EN")}>
+      <div className="w-6/12 flex items-center justify-evenly font-semibold ml-32 mt-4">
+        <p
+          className={`cursor-pointer ${
+            targetLang ? `text-white` : `text-customYellow`
+          }`}
+        >
+          To:
+        </p>
+        <p
+          className={`cursor-pointer ${
+            targetLang === `en` ? `text-customYellow` : `text-white`
+          }`}
+          onClick={() => setTargetLang("en")}
+        >
           İngilizce
         </p>
-        <p className="cursor-pointer" onClick={() => setTargetLang("TR")}>
+        <p
+          className={`cursor-pointer ${
+            targetLang === `tr` ? `text-customYellow` : `text-white`
+          }`}
+          onClick={() => setTargetLang("tr")}
+        >
           Türkçe
         </p>
-        <p className="cursor-pointer" onClick={() => setTargetLang("zh-CN")}>
+        <p
+          className={`cursor-pointer ${
+            targetLang === `zh-CN` ? `text-customYellow` : `text-white`
+          }`}
+          onClick={() => setTargetLang("zh-CN")}
+        >
           Çince
         </p>
-        <p className="cursor-pointer" onClick={() => setTargetLang("ar")}>
+        <p
+          className={`cursor-pointer ${
+            targetLang === `ar` ? `text-customYellow` : `text-white`
+          }`}
+          onClick={() => setTargetLang("ar")}
+        >
           Arapça
         </p>
       </div>
+      <div className="w-7/12  flex items-center rounded-full mt-4 mb-4 relative">
+        {result ? (
+          <textarea
+            className="w-full p-4 pr-10 rounded-md resize-y focus:outline-none focus:ring-2 text-2xl focus:customBlue text-black "
+            rows={7}
+            value={result}
+          />
+        ) : (
+          <textarea
+            className="w-full p-4 pr-10 rounded-md resize-y focus:outline-none focus:ring-2 text-2xl focus:customBlue text-black "
+            rows={7}
+          />
+        )}
 
-      {result ? (
-        <p className="w-7/12 p-6 bg-white text-black text-xl rounded-full">
-          {result}
-        </p>
-      ) : null}
+        {result ? (
+          <IoCopyOutline
+            className="absolute text-gray-500 bottom-4 right-3 text-2xl cursor-pointer"
+            onClick={copyFunc}
+          />
+        ) : null}
+      </div>
     </div>
   );
 };
 
 export default Inputs;
+// sonucu kopyalama  işlemindeyim - limit aşımı oldugundan deneyemedim
