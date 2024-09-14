@@ -9,8 +9,13 @@ const Inputs = () => {
   const [sourceLang, setSourceLang] = useState("");
   const [targetLang, setTargetLang] = useState("");
   const [result, setResult] = useState("");
+  const [checkCopyState, setCheckCopyState] = useState(false);
+  const [checkDeleteState, setCheckDeleteState] = useState(false);
+
+  const [copyText, setCopyText] = useState("Copy The Text");
 
   const getTranslatedText = async () => {
+    setCopyText("Copy The Text");
     try {
       if (inputText !== "" && sourceLang !== "" && targetLang !== "") {
         const response = await converterFunc(inputText, sourceLang, targetLang);
@@ -24,6 +29,7 @@ const Inputs = () => {
   };
 
   const copyFunc = async () => {
+    setCopyText("Copied");
     if (result) {
       await navigator.clipboard.writeText(result);
     }
@@ -94,8 +100,17 @@ const Inputs = () => {
             className="absolute text-gray-500 top-4 right-3 text-3xl cursor-pointer hover:text-red-400"
             onClick={() => {
               setInputText("");
+              setCheckDeleteState(false);
             }}
+            onMouseOver={() => setCheckDeleteState(true)}
+            onMouseOut={() => setCheckDeleteState(false)}
           />
+        ) : null}
+
+        {checkDeleteState ? (
+          <div className="w-24 h-16 bg-customGray absolute top-11 right-4 flex items-center justify-center rounded-md">
+            <p className="text-white text-center">Delete The Text</p>
+          </div>
         ) : null}
       </div>
       <div className="w-6/12 flex items-center justify-evenly font-semibold ml-32 mt-4">
@@ -140,7 +155,7 @@ const Inputs = () => {
         </p>
       </div>
       <div className="w-7/12  flex items-center rounded-full mt-4 mb-4 relative">
-        {result ? (
+        {result !== "" ? (
           <textarea
             className="w-full p-4 pr-10 rounded-md resize-y focus:outline-none focus:ring-2 text-2xl focus:customBlue text-black "
             rows={7}
@@ -153,10 +168,18 @@ const Inputs = () => {
           />
         )}
 
+        {checkCopyState ? (
+          <div className="w-24 h-16 bg-customGray absolute bottom-11 right-4 flex items-center justify-center rounded-md">
+            <p className="text-white text-center">{copyText}</p>
+          </div>
+        ) : null}
+
         {result ? (
           <IoCopyOutline
             className="absolute text-gray-500 bottom-4 right-3 text-2xl cursor-pointer hover:text-customBlue"
             onClick={copyFunc}
+            onMouseOver={() => setCheckCopyState(true)}
+            onMouseOut={() => setCheckCopyState(false)}
           />
         ) : null}
       </div>
