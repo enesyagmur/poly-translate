@@ -39,12 +39,8 @@ const Inputs = () => {
     getTranslatedText(inputText);
   }, [targetLang]);
 
-  useEffect(() => {
-    getTranslatedText(inputText);
-  }, [inputText]);
-
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col justify-center">
       <div className="w-6/12 flex items-center justify-evenly font-semibold mr-32">
         <p className={`${sourceLang ? `text-white` : "text-customYellow"}`}>
           From:
@@ -90,9 +86,12 @@ const Inputs = () => {
       </div>
       <div className="w-7/12  flex items-center rounded-full mt-4 mb-4 relative">
         <textarea
-          className="w-full p-4 pr-10 rounded-md resize-y focus:outline-none focus:ring-2 text-2xl focus:customBlue text-black "
-          rows={7}
-          onChange={(e) => setInputText(e.target.value)}
+          className="w-full p-4 pr-10 rounded-md resize-none focus:outline-none focus:ring-2 text-2xl focus:customBlue text-black "
+          rows={5}
+          onChange={(e) => {
+            setInputText(e.target.value);
+            getTranslatedText(e.target.value);
+          }}
           value={inputText}
         />
         {inputText ? (
@@ -113,7 +112,7 @@ const Inputs = () => {
           </div>
         ) : null}
       </div>
-      <div className="w-6/12 flex items-center justify-evenly font-semibold ml-32 mt-4">
+      <div className="w-6/12 flex items-center justify-evenly font-semibold  mt-4">
         <p
           className={`cursor-pointer ${
             targetLang ? `text-white` : `text-customYellow`
@@ -157,14 +156,14 @@ const Inputs = () => {
       <div className="w-7/12  flex items-center rounded-full mt-4 mb-4 relative">
         {result !== "" ? (
           <textarea
-            className="w-full p-4 pr-10 rounded-md resize-y focus:outline-none focus:ring-2 text-2xl focus:customBlue text-black "
-            rows={7}
+            className="w-full p-4 pr-10 rounded-md resize-none focus:outline-none focus:ring-2 text-2xl focus:customBlue text-black "
+            rows={5}
             value={result}
           />
         ) : (
           <textarea
-            className="w-full p-4 pr-10 rounded-md resize-y focus:outline-none focus:ring-2 text-2xl focus:customBlue text-black "
-            rows={7}
+            className="w-full p-4 pr-10 rounded-md resize-none focus:outline-none focus:ring-2 text-2xl focus:customBlue text-black "
+            rows={5}
           />
         )}
 
