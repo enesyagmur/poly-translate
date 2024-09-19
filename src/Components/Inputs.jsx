@@ -51,18 +51,18 @@ const Inputs = () => {
   };
 
   return (
-    <div className="md:w-5/12 lg:w-6/12 h-full flex flex-col justify-center items-start ">
-      <div className="w-11/12 lg:w-8/12 flex flex-col justify-center">
+    <div className="w-11/12 md:w-6/12 lg:w-6/12 h-full flex justify-end md:justify-start items-center relative">
+      <div className="w-11/12 md:w-10/12 lg:w-8/12 flex flex-col justify-center ml-12">
         <div className="w-full flex items-center justify-evenly font-semibold mr-32">
           <p
-            className={`sm:text-xs md:text-sm lg:text-base ${
+            className={`text-xs md:text-sm lg:text-base ${
               sourceLang ? `text-white` : "text-customYellow"
             }`}
           >
             From:
           </p>
           <p
-            className={`cursor-pointer sm:text-xs md:text-sm lg:text-base  ${
+            className={`cursor-pointer text-xs md:text-sm lg:text-base  ${
               sourceLang === `tr` ? `text-customYellow` : `text-white`
             }`}
             onClick={() => {
@@ -73,7 +73,7 @@ const Inputs = () => {
             Turkish
           </p>
           <p
-            className={`cursor-pointer sm:text-xs md:text-sm lg:text-base ${
+            className={`cursor-pointer text-xs md:text-sm lg:text-base ${
               sourceLang === `en` ? `text-customYellow` : `text-white`
             }`}
             onClick={() => {
@@ -84,7 +84,7 @@ const Inputs = () => {
             English
           </p>
           <p
-            className={`cursor-pointer sm:text-xs md:text-sm lg:text-base ${
+            className={`cursor-pointer text-xs md:text-sm lg:text-base ${
               sourceLang === `zh-CN` ? `text-customYellow` : `text-white`
             }`}
             onClick={() => setSourceLang("zh-CN")}
@@ -92,7 +92,7 @@ const Inputs = () => {
             Chinese
           </p>
           <p
-            className={`cursor-pointer sm:text-xs md:text-sm lg:text-base ${
+            className={`cursor-pointer text-xs md:text-sm lg:text-base ${
               sourceLang === `ar` ? `text-customYellow` : `text-white`
             }`}
             onClick={() => setSourceLang("ar")}
@@ -108,6 +108,7 @@ const Inputs = () => {
               setInputText(e.target.value);
               getTranslatedText(e.target.value);
             }}
+            placeholder="Source Text"
             value={inputText}
           />
           {inputText ? (
@@ -130,14 +131,14 @@ const Inputs = () => {
         </div>
         <div className="w-full flex items-center justify-evenly font-semibold  mt-4">
           <p
-            className={`sm:text-xs md:text-sm lg:text-base  ${
+            className={`text-xs md:text-sm lg:text-base  ${
               targetLang ? `text-white` : `text-customYellow`
             }`}
           >
             To:
           </p>
           <p
-            className={`cursor-pointer sm:text-xs md:text-sm lg:text-base ${
+            className={`cursor-pointer text-xs md:text-sm lg:text-base ${
               targetLang === `en` ? `text-customYellow` : `text-white`
             }`}
             onClick={() => setTargetLang("en")}
@@ -145,7 +146,7 @@ const Inputs = () => {
             English
           </p>
           <p
-            className={`cursor-pointer sm:text-xs md:text-sm lg:text-base ${
+            className={`cursor-pointer text-xs md:text-sm lg:text-base ${
               targetLang === `tr` ? `text-customYellow` : `text-white`
             }`}
             onClick={() => setTargetLang("tr")}
@@ -153,7 +154,7 @@ const Inputs = () => {
             Turkish
           </p>
           <p
-            className={`cursor-pointer sm:text-xs md:text-sm lg:text-base ${
+            className={`cursor-pointer text-xs md:text-sm lg:text-base ${
               targetLang === `zh-CN` ? `text-customYellow` : `text-white`
             }`}
             onClick={() => setTargetLang("zh-CN")}
@@ -161,7 +162,7 @@ const Inputs = () => {
             Chinese
           </p>
           <p
-            className={`cursor-pointer sm:text-xs md:text-sm lg:text-base ${
+            className={`cursor-pointer text-xs md:text-sm lg:text-base ${
               targetLang === `ar` ? `text-customYellow` : `text-white`
             }`}
             onClick={() => setTargetLang("ar")}
@@ -201,7 +202,7 @@ const Inputs = () => {
       </div>
       {(sourceLang !== "") & (targetLang !== "") ? (
         <div
-          className="w-[40px] h-[40px] flex items-center justify-center cursor-pointer rounded-full bg-neutral-700 hover:bg-neutral-600 mt-4 ml-4"
+          className="w-[40px] h-[40px] right-[-50px] md:right-0 flex items-center justify-center cursor-pointer rounded-full absolute md:relative  bg-neutral-700 hover:bg-neutral-600 mt-4 ml-4"
           onClick={reverseLang}
         >
           <BiTransferAlt className="text-2xl" />
@@ -212,7 +213,3 @@ const Inputs = () => {
 };
 
 export default Inputs;
-// belki translate animasyonu
-// hata gösterimi
-//notFound sayfası
-// responsive tasarım

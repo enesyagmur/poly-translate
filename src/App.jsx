@@ -5,9 +5,9 @@ import Inputs from "./Components/Inputs";
 
 function App() {
   return (
-    <div className="w-full h-screen bg-customGray flex flex-col overflow-hidden items-center">
+    <div className="w-full mih-h-screen md:h-screen bg-customGray flex flex-col overflow-hidden items-center">
       <Header />
-      <div className="w-11/12 lg:w-10/12 h-[96%] flex">
+      <div className="w-10/12 md:w-full lg:w-10/12 h-[96%] flex flex-col-reverse md:flex-row relative">
         <Inputs />
         <Image />
       </div>
@@ -16,3 +16,7 @@ function App() {
 }
 
 export default App;
+// responsive tasarım da sm ekranında kaldım
+// belki translate animasyonu
+// hata gösterimi
+//notFound sayfası
