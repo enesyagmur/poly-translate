@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { IoCopyOutline } from "react-icons/io5";
 import { BiTransferAlt } from "react-icons/bi";
-
+import { CiCircleAlert } from "react-icons/ci";
 import converterFunc from "../Api/converter";
 
 const Inputs = () => {
@@ -12,20 +12,23 @@ const Inputs = () => {
   const [result, setResult] = useState("");
   const [checkCopyState, setCheckCopyState] = useState(false);
   const [checkDeleteState, setCheckDeleteState] = useState(false);
-
+  const [checkLangFill, setCheckLangFill] = useState(false);
   const [copyText, setCopyText] = useState("Copy The Text");
 
   const getTranslatedText = async (input) => {
     setCopyText("Copy The Text");
     try {
-      if (input !== "" && sourceLang !== "" && targetLang !== "") {
-        const response = await converterFunc(input, sourceLang, targetLang);
-
-        setTimeout(() => {
-          setResult(response);
-        }, 1000);
+      if (sourceLang !== "" && targetLang !== "") {
+        if (input) {
+          const response = await converterFunc(input, sourceLang, targetLang);
+          setTimeout(() => {
+            setResult(response);
+          }, 1000);
+        } else {
+          console.error("Text girmek zorunludur");
+        }
       } else {
-        console.log("Kaynak dili ve Hedef dili seçmek zorunlu");
+        console.error("Kaynak ve Hedef dili seçmek zorunludur");
       }
     } catch (error) {
       console.error("Error in inputs:", error);
@@ -115,7 +118,7 @@ const Inputs = () => {
             value={inputText}
           />
 
-          {inputText ? (
+          {inputText & targetLang & sourceLang ? (
             <IoClose
               className="absolute text-gray-500 top-4 right-3 text-2xl cursor-pointer hover:text-red-400"
               onClick={() => {
@@ -130,6 +133,22 @@ const Inputs = () => {
           {checkDeleteState ? (
             <div className="w-24 h-16 bg-customGray absolute top-11 right-4 flex items-center justify-center rounded-md">
               <p className="text-white text-center">Delete The Text</p>
+            </div>
+          ) : null}
+
+          {(inputText !== "") & (sourceLang === "" || targetLang === "") ? (
+            <CiCircleAlert
+              className="absolute text-gray-500 top-4 right-3 text-2xl cursor-pointer hover:text-orange-400"
+              onMouseOver={() => setCheckLangFill(true)}
+              onMouseOut={() => setCheckLangFill(false)}
+            />
+          ) : null}
+
+          {checkLangFill ? (
+            <div className="w-24 h-20 bg-customGray absolute top-11 right-4 flex items-center justify-center rounded-md">
+              <p className="text-white text-center">
+                You Have To Select Language
+              </p>
             </div>
           ) : null}
         </div>
