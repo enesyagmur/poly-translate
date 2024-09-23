@@ -16,7 +16,5 @@ function App() {
 }
 
 export default App;
-// responsive tasarım da sm ekranında kaldım
-// belki translate animasyonu
 // hata gösterimi
-//notFound sayfası
+// belki translate animasyonu

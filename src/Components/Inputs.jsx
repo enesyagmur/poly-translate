@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { IoCopyOutline } from "react-icons/io5";
 import { BiTransferAlt } from "react-icons/bi";
-import { AiOutlineSend } from "react-icons/ai";
 
 import converterFunc from "../Api/converter";
 
@@ -16,12 +15,15 @@ const Inputs = () => {
 
   const [copyText, setCopyText] = useState("Copy The Text");
 
-  const getTranslatedText = async () => {
+  const getTranslatedText = async (input) => {
     setCopyText("Copy The Text");
     try {
-      if (inputText !== "" && sourceLang !== "" && targetLang !== "") {
-        const response = await converterFunc(inputText, sourceLang, targetLang);
-        setResult(response);
+      if (input !== "" && sourceLang !== "" && targetLang !== "") {
+        const response = await converterFunc(input, sourceLang, targetLang);
+
+        setTimeout(() => {
+          setResult(response);
+        }, 1000);
       } else {
         console.log("Kaynak dili ve Hedef dili seçmek zorunlu");
       }
@@ -105,16 +107,14 @@ const Inputs = () => {
           <textarea
             className="w-full p-4 pr-10 rounded-md resize-none focus:outline-none focus:ring-2 text-2xl focus:customBlue text-black "
             rows={5}
-            onChange={(e) => setInputText(e.target.value)}
+            onChange={(e) => {
+              setInputText(e.target.value);
+              getTranslatedText(e.target.value);
+            }}
             placeholder="Source Text"
             value={inputText}
           />
-          {inputText ? (
-            <AiOutlineSend
-              className="absolute text-gray-500 bottom-4 right-3 text-2xl cursor-pointer hover:text-customBlue"
-              onClick={getTranslatedText}
-            />
-          ) : null}
+
           {inputText ? (
             <IoClose
               className="absolute text-gray-500 top-4 right-3 text-2xl cursor-pointer hover:text-red-400"
