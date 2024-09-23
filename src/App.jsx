@@ -16,5 +16,3 @@ function App() {
 }
 
 export default App;
-// hata gösterimi
-// belki translate animasyonu
