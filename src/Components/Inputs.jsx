@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { IoCopyOutline } from "react-icons/io5";
 import { BiTransferAlt } from "react-icons/bi";
 import { CiCircleAlert } from "react-icons/ci";
 import converterFunc from "../Api/converter";
+import LanguageSelector from "./LanguageSelector";
+import debounce from "lodash.debounce";
 
 const Inputs = () => {
   const [inputText, setInputText] = useState("");
@@ -14,111 +16,87 @@ const Inputs = () => {
   const [checkDeleteState, setCheckDeleteState] = useState(false);
   const [checkLangFill, setCheckLangFill] = useState(false);
   const [copyText, setCopyText] = useState("Copy The Text");
+  const [error, setError] = useState(null);
 
-  const getTranslatedText = async (input) => {
-    setCopyText("Copy The Text");
-    try {
-      if (sourceLang !== "" && targetLang !== "") {
-        if (input) {
-          const response = await converterFunc(input, sourceLang, targetLang);
-          setTimeout(() => {
-            setResult(response);
-          }, 1000);
-        } else {
-          console.error("Text girmek zorunludur");
-        }
-      } else {
-        console.error("Kaynak ve Hedef dili seçmek zorunludur");
+  const showDeleteButton = inputText && targetLang && sourceLang;
+  const showLanguageAlert =
+    inputText !== "" && (sourceLang === "" || targetLang === "");
+  const showCopyButton = result !== "";
+  const showChangeLangButton = (sourceLang !== "") & (targetLang !== "");
+
+  const getTranslatedText = useCallback(
+    async (input) => {
+      setCopyText("Copy The Text");
+      setError(null);
+      if (input.trim() === "") {
+        setResult("");
+        return;
       }
-    } catch (error) {
-      console.error("Error in inputs:", error);
-    }
-  };
+      try {
+        if (!showChangeLangButton)
+          throw new Error("Source and target languages must be selected");
+        if (!input) throw new Error("Text input is required");
+        const response = await converterFunc(input, sourceLang, targetLang);
 
-  const copyFunc = async () => {
+        setResult(response);
+      } catch (error) {
+        console.error("Error in inputs:", error);
+        setError(error.message);
+      }
+    },
+    [showChangeLangButton, sourceLang, targetLang]
+  );
+
+  const debouncedGetTranslatedText = useMemo(
+    () => debounce(getTranslatedText, 500),
+    [getTranslatedText]
+  );
+
+  const copyFunc = useCallback(async () => {
     setCopyText("Copied");
     if (result) {
       await navigator.clipboard.writeText(result);
     }
-  };
+  }, [result]);
 
-  useEffect(() => {
-    getTranslatedText(inputText);
-  }, [targetLang]);
-
-  const reverseLang = () => {
-    const copySourceLang = sourceLang;
-    const copyTargetLang = targetLang;
-    setSourceLang(copyTargetLang);
-    setTargetLang(copySourceLang);
+  const reverseLang = useCallback(() => {
+    setSourceLang(targetLang);
+    setTargetLang(sourceLang);
     if (result) {
       setInputText(result);
     }
-  };
+  }, [sourceLang, targetLang, result]);
+
+  const handleSourceLanguageChange = useCallback((code) => {
+    setSourceLang(code);
+    setInputText("");
+  }, []);
+
+  useEffect(() => {
+    debouncedGetTranslatedText(inputText);
+    return () => debouncedGetTranslatedText.cancel();
+  }, [inputText, debouncedGetTranslatedText]);
 
   return (
     <div className="w-11/12 md:w-6/12 lg:w-6/12 h-full flex justify-end md:justify-start items-center relative">
       <div className="w-11/12 md:w-10/12 lg:w-8/12 flex flex-col justify-center ml-12">
-        <div className="w-full flex items-center justify-evenly font-semibold mr-32">
-          <p
-            className={`text-xs md:text-sm lg:text-base ${
-              sourceLang ? `text-white` : "text-customYellow"
-            }`}
-          >
-            From:
-          </p>
-          <p
-            className={`cursor-pointer text-xs md:text-sm lg:text-base  ${
-              sourceLang === `tr` ? `text-customYellow` : `text-white`
-            }`}
-            onClick={() => {
-              setSourceLang("tr");
-              setInputText("");
-            }}
-          >
-            Turkish
-          </p>
-          <p
-            className={`cursor-pointer text-xs md:text-sm lg:text-base ${
-              sourceLang === `en` ? `text-customYellow` : `text-white`
-            }`}
-            onClick={() => {
-              setSourceLang("en");
-              setInputText("");
-            }}
-          >
-            English
-          </p>
-          <p
-            className={`cursor-pointer text-xs md:text-sm lg:text-base ${
-              sourceLang === `zh-CN` ? `text-customYellow` : `text-white`
-            }`}
-            onClick={() => setSourceLang("zh-CN")}
-          >
-            Chinese
-          </p>
-          <p
-            className={`cursor-pointer text-xs md:text-sm lg:text-base ${
-              sourceLang === `ar` ? `text-customYellow` : `text-white`
-            }`}
-            onClick={() => setSourceLang("ar")}
-          >
-            Arabic
-          </p>
-        </div>
+        <LanguageSelector
+          isSource={true}
+          selectedLang={sourceLang}
+          onLanguageChange={handleSourceLanguageChange}
+        />
         <div className="w-full flex items-center rounded-full mt-4 mb-4 relative">
           <textarea
             className="w-full p-4 pr-10 rounded-md resize-none focus:outline-none focus:ring-2 text-2xl focus:customBlue text-black "
             rows={5}
             onChange={(e) => {
               setInputText(e.target.value);
-              getTranslatedText(e.target.value);
             }}
             placeholder="Source Text"
             value={inputText}
           />
 
-          {inputText & targetLang & sourceLang ? (
+          {showDeleteButton && (
             <IoClose
               className="absolute text-gray-500 top-4 right-3 text-2xl cursor-pointer hover:text-red-400"
               onClick={() => {
@@ -128,7 +106,7 @@ const Inputs = () => {
               onMouseOver={() => setCheckDeleteState(true)}
               onMouseOut={() => setCheckDeleteState(false)}
             />
-          ) : null}
+          )}
 
           {checkDeleteState ? (
             <div className="w-24 h-16 bg-customGray absolute top-11 right-4 flex items-center justify-center rounded-md">
@@ -136,13 +114,13 @@ const Inputs = () => {
             </div>
           ) : null}
 
-          {(inputText !== "") & (sourceLang === "" || targetLang === "") ? (
+          {showLanguageAlert && (
             <CiCircleAlert
               className="absolute text-gray-500 top-4 right-3 text-2xl cursor-pointer hover:text-orange-400"
               onMouseOver={() => setCheckLangFill(true)}
               onMouseOut={() => setCheckLangFill(false)}
             />
-          ) : null}
+          )}
 
           {checkLangFill ? (
             <div className="w-24 h-20 bg-customGray absolute top-11 right-4 flex items-center justify-center rounded-md">
@@ -152,47 +130,11 @@ const Inputs = () => {
             </div>
           ) : null}
         </div>
-        <div className="w-full flex items-center justify-evenly font-semibold  mt-4">
-          <p
-            className={`text-xs md:text-sm lg:text-base  ${
-              targetLang ? `text-white` : `text-customYellow`
-            }`}
-          >
-            To:
-          </p>
-          <p
-            className={`cursor-pointer text-xs md:text-sm lg:text-base ${
-              targetLang === `en` ? `text-customYellow` : `text-white`
-            }`}
-            onClick={() => setTargetLang("en")}
-          >
-            English
-          </p>
-          <p
-            className={`cursor-pointer text-xs md:text-sm lg:text-base ${
-              targetLang === `tr` ? `text-customYellow` : `text-white`
-            }`}
-            onClick={() => setTargetLang("tr")}
-          >
-            Turkish
-          </p>
-          <p
-            className={`cursor-pointer text-xs md:text-sm lg:text-base ${
-              targetLang === `zh-CN` ? `text-customYellow` : `text-white`
-            }`}
-            onClick={() => setTargetLang("zh-CN")}
-          >
-            Chinese
-          </p>
-          <p
-            className={`cursor-pointer text-xs md:text-sm lg:text-base ${
-              targetLang === `ar` ? `text-customYellow` : `text-white`
-            }`}
-            onClick={() => setTargetLang("ar")}
-          >
-            Arabic
-          </p>
-        </div>
+        <LanguageSelector
+          isSource={false}
+          selectedLang={targetLang}
+          onLanguageChange={setTargetLang}
+        />
         <div className="w-full flex items-center rounded-full mt-4 mb-4 relative">
           {result !== "" ? (
             <textarea
@@ -213,19 +155,19 @@ const Inputs = () => {
             </div>
           ) : null}
 
-          {result ? (
+          {showCopyButton && (
             <IoCopyOutline
               className="absolute text-gray-500 bottom-4 right-3 text-2xl cursor-pointer hover:text-customBlue"
               onClick={copyFunc}
               onMouseOver={() => setCheckCopyState(true)}
               onMouseOut={() => setCheckCopyState(false)}
             />
-          ) : null}
+          )}
         </div>
       </div>
-      {(sourceLang !== "") & (targetLang !== "") ? (
+      {showChangeLangButton ? (
         <div
-          className="w-[40px] h-[40px] right-[-50px] md:right-0 flex items-center justify-center cursor-pointer rounded-full absolute md:relative  bg-neutral-700 hover:bg-neutral-600 mt-4 ml-4"
+          className="w-[40px] h-[40px] right-[-50px] md:right-0 flex items-center justify-center cursor-pointer rounded-full absolute md:relative bg-neutral-700 hover:bg-neutral-600 mt-4 ml-4"
           onClick={reverseLang}
         >
           <BiTransferAlt className="text-2xl" />

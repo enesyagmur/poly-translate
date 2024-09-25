@@ -7,7 +7,7 @@ const Header = () => {
       </p>
       <img
         src={logo}
-        alt=""
+        alt="PolyTranslate Logo"
         className="w-[16px] sm:w-[20px] md:w-[24px] lg:w-[28px] h-[16px] sm:h-[20px] md:h-[24px] lg:h-[28px] object-cover ml-2 md:mt-2"
       />
     </div>

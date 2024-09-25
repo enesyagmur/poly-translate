@@ -16,3 +16,5 @@ function App() {
 }
 
 export default App;
+
+// input da verimlilik değişiklikleri 2. tekrar eden kodları düzeltmedeyim

@@ -9,37 +9,37 @@ export default {
         customYellow: "#F5AF54",
       },
       keyframes: {
-        firstWordColorChange: {
+        wordColorChange1: {
           "0%": { color: "white" },
           "20%": { color: "#F5AF54" },
           "100%": { color: "white" },
         },
-        secondWordColorChange: {
+        wordColorChange2: {
           "20%": { color: "white" },
           "40%": { color: "#F5AF54" },
           "100%": { color: "white" },
         },
-        thirtWordColorChange: {
+        wordColorChange3: {
           "40%": { color: "white" },
           "60%": { color: "#F5AF54" },
           "100%": { color: "white" },
         },
-        fourtrtWordColorChange: {
+        wordColorChange4: {
           "60%": { color: "white" },
           "80%": { color: "#F5AF54" },
           "100%": { color: "white" },
         },
-        fifthWordColorChange: {
+        wordColorChange5: {
           "80%": { color: "white" },
           "100%": { color: "#F5AF54" },
         },
       },
       animation: {
-        firstWordColorChange: "firstWordColorChange 3s infinite",
-        secondWordColorChange: "secondWordColorChange 3s infinite",
-        thirtWordColorChange: "thirtWordColorChange 3s infinite",
-        fourtrtWordColorChange: "fourtrtWordColorChange 3s infinite",
-        fifthWordColorChange: "fifthWordColorChange 3s infinite",
+        wordColorChange1: "wordColorChange1 3s infinite",
+        wordColorChange2: "wordColorChange2 3s infinite",
+        wordColorChange3: "wordColorChange3 3s infinite",
+        wordColorChange4: "wordColorChange4 3s infinite",
+        wordColorChange5: "wordColorChange5 3s infinite",
       },
     },
   },
