@@ -7,7 +7,7 @@ import converterFunc from "../Api/converter";
 import LanguageSelector from "./LanguageSelector";
 import debounce from "lodash.debounce";
 
-const Inputs = () => {
+const Inputs = ({ setCheckError }) => {
   const [inputText, setInputText] = useState("");
   const [sourceLang, setSourceLang] = useState("");
   const [targetLang, setTargetLang] = useState("");
@@ -16,7 +16,6 @@ const Inputs = () => {
   const [checkDeleteState, setCheckDeleteState] = useState(false);
   const [checkLangFill, setCheckLangFill] = useState(false);
   const [copyText, setCopyText] = useState("Copy The Text");
-  const [error, setError] = useState(null);
 
   const showDeleteButton = inputText && targetLang && sourceLang;
   const showLanguageAlert =
@@ -27,7 +26,7 @@ const Inputs = () => {
   const getTranslatedText = useCallback(
     async (input) => {
       setCopyText("Copy The Text");
-      setError(null);
+      setCheckError(null);
       if (input.trim() === "") {
         setResult("");
         return;
@@ -40,8 +39,9 @@ const Inputs = () => {
 
         setResult(response);
       } catch (error) {
-        console.error("Error in inputs:", error);
-        setError(error.message);
+        if (error.message === "RATE_LIMIT_EXCEEDED") {
+          setCheckError(error.message);
+        }
       }
     },
     [showChangeLangButton, sourceLang, targetLang]
@@ -123,9 +123,9 @@ const Inputs = () => {
           )}
 
           {checkLangFill ? (
-            <div className="w-24 h-20 bg-customGray absolute top-11 right-4 flex items-center justify-center rounded-md">
+            <div className="w-28 h-32 bg-customGray absolute top-11 right-4 flex items-center justify-center rounded-md">
               <p className="text-white text-center">
-                You Have To Select Language
+                You Have To Select Source and Target Language
               </p>
             </div>
           ) : null}

@@ -1,15 +1,24 @@
+import { useState } from "react";
 import "./App.css";
 import Header from "./Components/Header";
 import Image from "./Components/Image";
 import Inputs from "./Components/Inputs";
+import ShowError from "./Components/ShowError";
 
 function App() {
+  const [checkError, setCheckError] = useState("");
   return (
-    <div className="w-full mih-h-screen md:h-screen bg-customGray flex flex-col overflow-hidden items-center">
+    <div className="w-full min-h-screen bg-customGray flex flex-col items-center overflow-hidden">
       <Header />
-      <div className="w-10/12 md:w-full lg:w-10/12 h-[96%] flex flex-col-reverse md:flex-row relative">
-        <Inputs />
-        <Image />
+      <div className="flex-grow flex items-center justify-center">
+        {checkError ? (
+          <ShowError />
+        ) : (
+          <div className="w-10/12 lg:w-10/12 h-full flex flex-col-reverse md:flex-row relative">
+            <Inputs setCheckError={setCheckError} />
+            <Image />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -17,4 +26,5 @@ function App() {
 
 export default App;
 
-// input da verimlilik değişiklikleri 2. tekrar eden kodları düzeltmedeyim
+// hata gösterimi
+// proje deploy
