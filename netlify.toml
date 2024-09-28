@@ -1,0 +1,24 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "18" # Node.js sürümünü güncelleyin
+
+[[plugins]]
+  package = "netlify-plugin-cache"
+    [plugins.inputs]
+      paths = ["node_modules", ".cache", "dist"]
+
+# Yeni eklenen bölümler
+[context.production]
+  command = "npm run build"
+
+[context.deploy-preview]
+  command = "npm run build:preview"
+
+[[headers]]
+  for = "/*"
+    [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"

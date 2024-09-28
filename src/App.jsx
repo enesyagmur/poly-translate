@@ -26,5 +26,4 @@ function App() {
 
 export default App;
 
-// hata gösterimi
 // proje deploy
