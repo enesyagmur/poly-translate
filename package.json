@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ampproject/remapping": "^2.3.0",
     "@reduxjs/toolkit": "^2.2.7",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.7",
